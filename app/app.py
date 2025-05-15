@@ -1,38 +1,36 @@
-Python 3.12.4 (tags/v3.12.4:8e8a4ba, Jun  6 2024, 19:30:16) [MSC v.1940 64 bit (AMD64)] on win32
-Type "help", "copyright", "credits" or "license()" for more information.
->>> import streamlit as st
-... import pandas as pd
-... import joblib
-... import numpy as np
-... 
-... # Load pre-trained models
-... diabetes_model = joblib.load('models/diabetes_model.pkl')
-... stroke_model = joblib.load('models/stroke_model.pkl')
-... heart_model = joblib.load('models/heart_model.pkl')
-... 
-... st.title("Disease Prediction App")
-... 
-... disease_type = st.selectbox("Select Disease for Prediction", ['Diabetes', 'Stroke', 'Heart Disease'])
-... 
-... def predict_disease(model, input_data):
-...     input_df = pd.DataFrame([input_data])
-...     prediction = model.predict(input_df)[0]
-...     return 'Positive' if prediction == 1 else 'Negative'
-... 
-... # === Form Fields ===
-... if disease_type == 'Diabetes':
-...     st.header("Diabetes Prediction Input")
-...     gender = st.selectbox("Gender", ['Male', 'Female', 'Other'])
-...     age = st.number_input("Age", 0, 120)
-...     hypertension = st.selectbox("Hypertension", [0, 1])
-...     heart_disease = st.selectbox("Heart Disease", [0, 1])
-...     smoking_history = st.selectbox("Smoking History", ['never', 'current', 'former', 'not current', 'ever', 'unknown'])
-...     bmi = st.number_input("BMI")
-...     hba1c_level = st.number_input("HbA1c Level")
-...     blood_glucose_level = st.number_input("Blood Glucose Level")
-...     age_group = st.selectbox("Age Group", ['Child', 'Young Adult', 'Adult', 'Senior'])
-...     bmi_category = st.selectbox("BMI Category", ['Underweight', 'Normal', 'Overweight', 'Obese'])
-...     glucose_tolerance = st.selectbox("Glucose Tolerance", ['Normal', 'Impaired', 'Diabetes'])
+import streamlit as st
+import pandas as pd
+import joblib
+import numpy as np
+
+# Load pre-trained models
+diabetes_model = joblib.load('models/diabetes_model.pkl')
+stroke_model = joblib.load('models/stroke_model.pkl')
+heart_model = joblib.load('models/heart_model.pkl')
+
+st.title("Disease Prediction App")
+
+disease_type = st.selectbox("Select Disease for Prediction", ['Diabetes', 'Stroke', 'Heart Disease'])
+
+def predict_disease(model, input_data):
+    input_df = pd.DataFrame([input_data])
+    prediction = model.predict(input_df)[0]
+    return 'Positive' if prediction == 1 else 'Negative'
+
+# === Form Fields ===
+if disease_type == 'Diabetes':
+    st.header("Diabetes Prediction Input")
+    gender = st.selectbox("Gender", ['Male', 'Female', 'Other'])
+    age = st.number_input("Age", 0, 120)
+    hypertension = st.selectbox("Hypertension", [0, 1])
+    heart_disease = st.selectbox("Heart Disease", [0, 1])
+    smoking_history = st.selectbox("Smoking History", ['never', 'current', 'former', 'not current', 'ever', 'unknown'])
+    bmi = st.number_input("BMI")
+    hba1c_level = st.number_input("HbA1c Level")
+    blood_glucose_level = st.number_input("Blood Glucose Level")
+    age_group = st.selectbox("Age Group", ['Child', 'Young Adult', 'Adult', 'Senior'])
+    bmi_category = st.selectbox("BMI Category", ['Underweight', 'Normal', 'Overweight', 'Obese'])
+    glucose_tolerance = st.selectbox("Glucose Tolerance", ['Normal', 'Impaired', 'Diabetes'])
 
     input_data = {
         'gender': gender,
