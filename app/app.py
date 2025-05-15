@@ -4,9 +4,9 @@ import joblib
 import numpy as np
 
 # Load pre-trained models
-diabetes_model = joblib.load('models/diabetes_model.pkl')
-stroke_model = joblib.load('models/stroke_model.pkl')
-heart_model = joblib.load('models/heart_model.pkl')
+diabetes_model = joblib.load('models/diabetes_xgboost.pkl')
+stroke_model = joblib.load('models/stroke_random_forest.pkl')
+heart_model = joblib.load('models/heart_logistic_regression.pkl')
 
 st.title("Disease Prediction App")
 
