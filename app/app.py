@@ -117,7 +117,7 @@ else:
     chol     = st.number_input("Cholesterol", 100, 600, 200)
     fbs      = st.selectbox("Fasting Blood Sugar > 120 mg/dl", [0, 1])
     restecg  = st.selectbox("Resting ECG", [0, 1, 2])
-    thalch  = st.number_input("Max Heart Rate Achieved", 60, 220, 150)
+    thalch   = st.number_input("Max Heart Rate Achieved", 60, 220, 150)
     exang    = st.selectbox("Exercise Induced Angina", [0, 1])
     dataset_label = st.selectbox("Dataset Source", dataset_options)
 
@@ -139,12 +139,10 @@ else:
         elif x <= 239: return "borderline"
         else: return "high"
 
-    # Feature engineered fields
     age_group      = cat_age(age_h)
     blood_pressure = bp_risk(trestbps)
     chol_risk      = chol_cat(chol)
 
-    # Build DataFrame (matching training data structure exactly)
     df3 = pd.DataFrame([{
         "age":            age_h,
         "sex":            sex,
@@ -162,11 +160,22 @@ else:
         "chol_risk":      chol_risk
     }])
 
-    
+    # ===== ADD HERE: debug and fix dtypes =====
+    st.write("Input DataFrame dtypes:")
+    st.write(df3.dtypes)
+    st.write("Input DataFrame values:")
+    st.write(df3)
+
+    # Force numeric columns to numeric type (convert any bad types)
+    numeric_cols = ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalch", "exang", "oldpeak"]
+    for col in numeric_cols:
+        df3[col] = pd.to_numeric(df3[col], errors='coerce')
+
     if st.button("Predict Heart Disease"):
         try:
             Xp3 = heart_pre.transform(df3)
             predict_and_show(heart_clf, Xp3)
         except Exception as e:
             st.error(f"Prediction failed. Please check inputs. Error: {e}")
+
 
