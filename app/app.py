@@ -117,7 +117,7 @@ else:
     chol     = st.number_input("Cholesterol", 100, 600, 200)
     fbs      = st.selectbox("Fasting Blood Sugar > 120 mg/dl", [0, 1])
     restecg  = st.selectbox("Resting ECG", [0, 1, 2])
-    thalach  = st.number_input("Max Heart Rate Achieved", 60, 220, 150)
+    thalch  = st.number_input("Max Heart Rate Achieved", 60, 220, 150)
     exang    = st.selectbox("Exercise Induced Angina", [0, 1])
     dataset_label = st.selectbox("Dataset Source", dataset_options)
 
@@ -154,7 +154,7 @@ else:
         "chol":           chol,
         "fbs":            fbs,
         "restecg":        restecg,
-        "thalch":         thalach,       # match typo from training
+        "thalch":         thalch, 
         "exang":          exang,
         "oldpeak":        0.0,
         "age_group":      age_group,
