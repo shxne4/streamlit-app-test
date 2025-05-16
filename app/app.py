@@ -7,7 +7,7 @@ import joblib
 def load_diabetes_model():
     return joblib.load('diabetes_model.pkl')
 
-diabetes_model = load_diabetes_model()
+#diabetes_model = load_diabetes_model()
 
 # App title
 st.title("Diabetes Prediction App")
