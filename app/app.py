@@ -137,20 +137,24 @@ else:
     sex_numeric     = 1 if sex == "Male" else 0  # assuming model used 1/0 for sex
 
     df3 = pd.DataFrame([{
-        "age":           age_h,
-        "sex":           sex_numeric,
-        "cp":            cp,
-        "trestbps":      trestbps,
-        "chol":          chol,
-        "fbs":           fbs,
-        "restecg":       restecg,
-        "thalach":       thalach,
-        "exang":         exang,
-        "age_group":     age_group,
+        "id":             0,  # dummy value
+        "age":            age_h,
+        "sex":            sex_numeric,
+        "dataset":        dataset_label,
+        "cp":             cp,
+        "trestbps":       trestbps,
+        "chol":           chol,
+        "fbs":            fbs,
+        "restecg":        restecg,
+        "thalch":         thalach,       # rename to match training typo
+        "exang":          exang,
+        "oldpeak":        0.0,           # default or user input later
+        "num":            0,             # placeholder (target column during training)
+        "age_group":      age_group,
         "blood_pressure": blood_pressure,
-        "chol_risk":     chol_risk,
-        "dataset":       dataset_label
+        "chol_risk":      chol_risk
     }])
+
 
     # 🔍 DEBUG: Show expected vs actual input columns
     st.write("Expected columns by preprocessor:", heart_pre.feature_names_in_)
