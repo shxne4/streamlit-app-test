@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import joblib
 
 st.set_page_config(page_title="Disease Predictor", layout="centered")
@@ -141,7 +142,14 @@ else:
         "dataset":           dataset
     }])
 
-    # Pad & align columns to what the preprocessor expects
+    # --- Monkey-patch out NaN category if present in encoder categories_
+    cat_enc = heart_pre.named_transformers_['cat']  # the OneHotEncoder step
+    cleaned_cats = []
+    for cats in cat_enc.categories_:
+        cleaned_cats.append([c for c in cats if not (isinstance(c, float) and np.isnan(c))])
+    cat_enc.categories_ = cleaned_cats
+
+    # --- Align columns & reorder ---
     expected = heart_pre.feature_names_in_
     for col in expected:
         if col not in df3.columns:
