@@ -154,12 +154,14 @@ else:
         "chol":           float(chol),
         "fbs":            str(fbs),
         "restecg":        str(restecg),
-        "thalach":        float(thalach),
+        "thalch":         float(thalach),    # renamed to match training typo
         "exang":          str(exang),
+        "oldpeak":        0.0,               # add it with default
         "age_group":      age_group,
         "blood_pressure": blood_pressure,
         "chol_risk":      chol_risk
     }])
+
 
     if st.button("Predict Heart Disease"):
         try:
