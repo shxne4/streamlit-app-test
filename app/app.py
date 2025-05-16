@@ -14,7 +14,7 @@ def load_pipelines():
 # Load the pipelines
 diabetes_pipe, stroke_pipe, heart_pipe = load_pipelines()
 
-# Split into preprocessor and classifier for inference
+# Split into preprocessor & classifier
 diab_pre,  diab_clf   = diabetes_pipe.named_steps["preprocessor"], diabetes_pipe.named_steps["classifier"]
 stroke_pre, stroke_clf = stroke_pipe.named_steps["preprocessor"], stroke_pipe.named_steps["classifier"]
 heart_pre,  heart_clf  = heart_pipe.named_steps["preprocessor"],  heart_pipe.named_steps["classifier"]
@@ -33,29 +33,28 @@ def predict_and_show(clf, X_proc):
 # ── DIABETES ─────────────────────────────────────────────────────────
 if disease == "Diabetes":
     st.header("Diabetes Risk Predictor")
-    gender          = st.selectbox("Gender", ["Male", "Female", "Other"])
+    gender          = st.selectbox("Gender", ["Male","Female","Other"])
     age             = st.number_input("Age", 0, 120, 30)
     hypertension    = st.selectbox("Hypertension (0=No,1=Yes)", [0,1])
     heart_disease_d = st.selectbox("Heart Disease (0=No,1=Yes)", [0,1])
-    smoking_history = st.selectbox("Smoking History", ["never", "former", "unknown"])
+    smoking_history = st.selectbox("Smoking History", ["never","former","unknown"])
     bmi             = st.number_input("BMI", 10.0, 60.0, 25.0, step=0.1)
     hba1c           = st.number_input("HbA1c Level", 3.0, 15.0, 5.5, step=0.1)
     blood_glucose   = st.number_input("Blood Glucose Level", 50.0, 300.0, 100.0, step=0.1)
 
-    # Bucket functions (must match training labels exactly)
     def cat_age(x):
-        if x < 20: return "0-19"
-        if x < 40: return "20-39"
-        if x < 60: return "40-59"
+        if x<20: return "0-19"
+        if x<40: return "20-39"
+        if x<60: return "40-59"
         return "60+"
     def cat_bmi(x):
-        if x < 18.5: return "underweight"
-        if x < 25:   return "normal"
-        if x < 30:   return "overweight"
+        if x<18.5: return "underweight"
+        if x<25:   return "normal"
+        if x<30:   return "overweight"
         return "obese"
     def cat_gl(x):
-        if x < 140:  return "normal"
-        if x < 200:  return "prediabetic"
+        if x<140:  return "normal"
+        if x<200:  return "prediabetic"
         return "diabetic"
 
     age_group         = cat_age(age)
@@ -88,7 +87,7 @@ elif disease == "Stroke":
     heart_disease_s  = st.selectbox("Heart Disease (0=No,1=Yes)", [0,1])
     avg_glucose      = st.number_input("Average Glucose Level", 0.0, 400.0, 120.0, step=0.1)
     bmi_s            = st.number_input("BMI", 10.0, 60.0, 24.0, step=0.1)
-    glucose_risk     = st.selectbox("Glucose Risk", ["High", "Normal"])
+    glucose_risk     = st.selectbox("Glucose Risk", ["High","Normal"])
     bp_risk_s        = st.selectbox("Blood Pressure Risk (0=No,1=Yes)", [0,1])
 
     df2 = pd.DataFrame([{
@@ -108,13 +107,13 @@ elif disease == "Stroke":
 # ── HEART DISEASE ────────────────────────────────────────────────────
 else:
     st.header("Heart Disease Risk Predictor")
-    # Numeric inputs
+    # Numeric
     age_h           = st.number_input("Age", 0, 120, 50)
     hypertension_h  = st.selectbox("Hypertension (0=No,1=Yes)", [0,1])
     avg_glucose_h   = st.number_input("Average Glucose Level", 0.0, 400.0, 130.0, step=0.1)
     bmi_h           = st.number_input("BMI", 10.0, 60.0, 26.0, step=0.1)
     stroke_h        = st.selectbox("Stroke History (0=No,1=Yes)", [0,1])
-    # Categorical inputs matching training
+    # Categorical
     sex             = st.selectbox("Sex", ["Male","Female"])
     cp              = st.selectbox("Chest Pain Type (0–3)", [0,1,2,3])
     fbs             = st.selectbox("Fasting BS >120mg/dl (0=No,1=Yes)", [0,1])
@@ -141,6 +140,13 @@ else:
         "chol_risk":         chol_risk,
         "dataset":           dataset
     }])
+
+    # Pad & align columns to what the preprocessor expects
+    expected = heart_pre.feature_names_in_
+    for col in expected:
+        if col not in df3.columns:
+            df3[col] = 0
+    df3 = df3[expected]
 
     if st.button("Predict Heart Disease"):
         Xp3 = heart_pre.transform(df3)
