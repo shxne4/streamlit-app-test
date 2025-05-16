@@ -108,10 +108,8 @@ elif disease == "Stroke":
 else:
     st.header("Heart Disease Risk Predictor")
 
-    # Valid dataset values used in training (important!)
     dataset_options = ["cleveland", "hungary", "switzerland", "va"]
-    
-    # Inputs
+
     age_h    = st.number_input("Age", 0, 120, 55)
     sex      = st.selectbox("Sex (0 = Female, 1 = Male)", [0, 1])
     cp       = st.selectbox("Chest Pain Type (0–3)", [0, 1, 2, 3])
@@ -123,7 +121,6 @@ else:
     exang    = st.selectbox("Exercise Induced Angina", [0, 1])
     dataset_label = st.selectbox("Dataset Source", dataset_options)
 
-    # Functions for feature engineering
     def cat_age(x):
         if x < 30: return "under 30"
         elif x < 40: return "30s"
@@ -149,7 +146,6 @@ else:
 
     # Prepare matching input DataFrame
     df3 = pd.DataFrame([{
-        "id":             0,
         "age":            age_h,
         "sex":            sex,
         "dataset":        dataset_label,
@@ -158,21 +154,19 @@ else:
         "chol":           chol,
         "fbs":            fbs,
         "restecg":        restecg,
-        "thalch":         thalach,
+        "thalach":        thalach,
         "exang":          exang,
-        "oldpeak":        0.0,
-        "num":            0,
         "age_group":      age_group,
         "blood_pressure": blood_pressure,
         "chol_risk":      chol_risk
     }])
 
-    st.write("Input columns:", df3.columns.tolist())
-    st.write(df3.head())
-    for col in df3.select_dtypes(include=['object', 'category']).columns:
-        st.write(f"Unique values in {col}:", df3[col].unique())
+    # Ensure categorical columns are strings
+    for col in ["sex", "cp", "fbs", "restecg", "exang", 
+                "age_group", "blood_pressure", "chol_risk", "dataset"]:
+        if col in df3.columns:
+            df3[col] = df3[col].astype(str)
 
-    
     if st.button("Predict Heart Disease"):
         try:
             Xp3 = heart_pre.transform(df3)
