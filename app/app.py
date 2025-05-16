@@ -6,8 +6,12 @@ import joblib
 @st.cache_resource
 def load_diabetes_model():
     return joblib.load('diabetes_model.pkl')
+    
+import os
+st.write("Current working directory:", os.getcwd())
+st.write("Files in directory:", os.listdir())
 
-diabetes_model = load_diabetes_model()
+#diabetes_model = load_diabetes_model()
 
 # App title
 st.title("Diabetes Prediction App")
