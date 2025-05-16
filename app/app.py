@@ -107,63 +107,60 @@ elif disease == "Stroke":
 # ── HEART DISEASE ────────────────────────────────────────────────────
 else:
     st.header("Heart Disease Risk Predictor")
-    age_h       = st.number_input("Age", 0, 120, 55)
-    sex         = st.selectbox("Sex", ["Male", "Female"])
-    cp          = st.selectbox("Chest Pain Type (cp)", [0, 1, 2, 3])
-    trestbps    = st.number_input("Resting Blood Pressure (trestbps)", 80, 200, 120)
-    chol        = st.number_input("Cholesterol (chol)", 100, 400, 200)
-    fbs         = st.selectbox("Fasting Blood Sugar > 120 mg/dl (fbs)", [0, 1])
-    restecg     = st.selectbox("Resting ECG (restecg)", [0, 1, 2])
-    thalach     = st.number_input("Max Heart Rate Achieved (thalach)", 60, 220, 150)
-    exang       = st.selectbox("Exercise Induced Angina (exang)", [0, 1])
-    dataset_label = st.selectbox("Dataset Source", ["Cleveland", "Hungarian", "Switzerland", "VA"])
 
-    # Derived features
+    # Inputs
+    age_h         = st.number_input("Age", 0, 120, 55)
+    sex           = st.selectbox("Sex (0 = Female, 1 = Male)", [0, 1])
+    cp            = st.selectbox("Chest Pain Type (0–3)", [0, 1, 2, 3])
+    trestbps      = st.number_input("Resting Blood Pressure", 80, 200, 120)
+    chol          = st.number_input("Cholesterol", 100, 600, 200)
+    fbs           = st.selectbox("Fasting Blood Sugar > 120 mg/dl (1 = True, 0 = False)", [0, 1])
+    restecg       = st.selectbox("Resting ECG (0–2)", [0, 1, 2])
+    thalach       = st.number_input("Max Heart Rate Achieved", 60, 220, 150)
+    exang         = st.selectbox("Exercise Induced Angina (1 = Yes, 0 = No)", [0, 1])
+    dataset_label = st.selectbox("Dataset Source", ["cleveland", "hungary", "switzerland", "va"])
+
     def cat_age(x):
-        if x < 40: return "under_40"
-        elif x < 55: return "40s-50s"
+        if x < 30: return "under 30"
+        elif x < 40: return "30s"
+        elif x < 50: return "40s"
+        elif x < 60: return "50s"
         elif x < 70: return "60s"
-        return "70+"
-    
-    def cat_bp(x):
-        return "high" if x >= 130 else "normal"
+        else: return "70+"
 
-    def cat_chol(x):
-        return "high" if x >= 240 else "normal"
+    def bp_risk(x):
+        if x < 90: return "low"
+        elif x <= 140: return "normal"
+        else: return "high"
 
-    age_group       = cat_age(age_h)
-    blood_pressure  = cat_bp(trestbps)
-    chol_risk       = cat_chol(chol)
-    sex_numeric     = 1 if sex == "Male" else 0  # assuming model used 1/0 for sex
+    def chol_cat(x):
+        if x < 200: return "normal"
+        elif x <= 239: return "borderline"
+        else: return "high"
 
+    age_group      = cat_age(age_h)
+    blood_pressure = bp_risk(trestbps)
+    chol_risk      = chol_cat(chol)
+
+    # Prepare input DataFrame (MATCHING TRAINING COLUMNS)
     df3 = pd.DataFrame([{
-        "id":             0,  # dummy value
+        "id":             0,
         "age":            age_h,
-        "sex":            sex_numeric,
+        "sex":            sex,
         "dataset":        dataset_label,
         "cp":             cp,
         "trestbps":       trestbps,
         "chol":           chol,
         "fbs":            fbs,
         "restecg":        restecg,
-        "thalch":         thalach,       # rename to match training typo
+        "thalch":         thalach,  # renamed to match training typo
         "exang":          exang,
-        "oldpeak":        0.0,           # default or user input later
-        "num":            0,             # placeholder (target column during training)
+        "oldpeak":        0.0,
+        "num":            0,
         "age_group":      age_group,
         "blood_pressure": blood_pressure,
         "chol_risk":      chol_risk
     }])
-
-
-    # 🔍 DEBUG: Show expected vs actual input columns
-    st.write("Expected columns by preprocessor:", heart_pre.feature_names_in_)
-    st.write("Your input DataFrame columns:", df3.columns.tolist())
-
-    if st.button("Predict Heart Disease"):
-        Xp3 = heart_pre.transform(df3)  # This is where the error happens
-        predict_and_show(heart_clf, Xp3)
-
 
     if st.button("Predict Heart Disease"):
         Xp3 = heart_pre.transform(df3)
