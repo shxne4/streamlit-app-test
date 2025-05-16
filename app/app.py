@@ -107,7 +107,7 @@ elif disease == "Stroke":
 # ── HEART DISEASE ────────────────────────────────────────────────────
 else:
     st.header("Heart Disease Risk Predictor")
-       age_h           = st.number_input("Age", 0, 120, 50)
+    age_h           = st.number_input("Age", 0, 120, 50)
     sex_h           = st.selectbox("Sex", ["Male", "Female"])
     cp              = st.selectbox("Chest Pain Type (0-3)", [0, 1, 2, 3])
     trestbps        = st.number_input("Resting BP (mm Hg)", 80, 200, 120)
