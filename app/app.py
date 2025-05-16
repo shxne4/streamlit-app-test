@@ -167,6 +167,12 @@ else:
         "chol_risk":      chol_risk
     }])
 
+    st.write("Input columns:", df3.columns.tolist())
+    st.write(df3.head())
+    for col in df3.select_dtypes(include=['object', 'category']).columns:
+        st.write(f"Unique values in {col}:", df3[col].unique())
+
+    
     if st.button("Predict Heart Disease"):
         try:
             Xp3 = heart_pre.transform(df3)
