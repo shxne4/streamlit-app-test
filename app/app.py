@@ -162,8 +162,6 @@ else:
         "chol_risk":      chol_risk
     }])
 
-
-    print(pipe.named_steps["preprocessor"].transformers)
     
     if st.button("Predict Heart Disease"):
         try:
