@@ -139,11 +139,11 @@ else:
         elif x <= 239: return "borderline"
         else: return "high"
 
+    # Feature engineered fields
     age_group      = cat_age(age_h)
     blood_pressure = bp_risk(trestbps)
     chol_risk      = chol_cat(chol)
 
-    # Build DataFrame (matching training data structure exactly)
     # Build DataFrame (matching training data structure exactly)
     df3 = pd.DataFrame([{
         "age":            age_h,
@@ -154,27 +154,31 @@ else:
         "chol":           chol,
         "fbs":            fbs,
         "restecg":        restecg,
-        "thalch":         thalch,
+        "thalch":         thalch, 
         "exang":          exang,
         "oldpeak":        0.0,
         "age_group":      age_group,
         "blood_pressure": blood_pressure,
         "chol_risk":      chol_risk
     }])
-    
-    # Explicitly convert categorical columns to 'category' dtype
+
+    # --- Enforce types ---
+    num_cols = ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalch", "exang", "oldpeak"]
+    for col in num_cols:
+        df3[col] = pd.to_numeric(df3[col], errors='coerce')
+
     cat_cols = ["dataset", "age_group", "blood_pressure", "chol_risk"]
     for col in cat_cols:
         df3[col] = df3[col].astype("category")
 
-
-    # === DEBUGGING: Check for NaNs and categorical values ===
-    st.write("Check for NaNs in input data:")
-    st.write(df3.isna().sum())
-
-    st.write("Unique values per categorical column:")
-    for col in df3.select_dtypes(include=['object', 'category']).columns:
-        st.write(f"{col}: {df3[col].unique()}")
+    # --- Debug prints to check types and contents ---
+    st.write("DataFrame dtypes:")
+    st.write(df3.dtypes)
+    st.write("DataFrame sample:")
+    st.write(df3)
+    st.write("Unique value types per column:")
+    for col in df3.columns:
+        st.write(f"{col}: {df3[col].map(type).unique()}")
 
     if st.button("Predict Heart Disease"):
         try:
@@ -182,6 +186,7 @@ else:
             predict_and_show(heart_clf, Xp3)
         except Exception as e:
             st.error(f"Prediction failed. Please check inputs. Error: {e}")
+
 
 
 
