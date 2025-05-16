@@ -108,43 +108,31 @@ elif disease == "Stroke":
 else:
     st.header("Heart Disease Risk Predictor")
 
-    dataset_options = ["cleveland", "hungary", "switzerland", "va"]
+    dataset_options = ["Cleveland", "Hungary", "Switzerland", "VA"]
+    cp_options = ["typical angina", "atypical angina", "non anginal", "asymptomatic"]
+    restecg_options = ["normal", "st-t abnormality", "lv hypertrophy"]
+    bp_options = ["Normal", "Elevated", "Stage1", "Stage2"]
+    chol_options = ["Normal", "Borderline", "High"]
+    age_groups = ["30-39", "40-49", "50-59", "60-69", "70+"]
 
+    # User inputs
     age_h    = st.number_input("Age", 0, 120, 55)
-    sex      = st.selectbox("Sex (0 = Female, 1 = Male)", [0, 1])
-    cp       = st.selectbox("Chest Pain Type (0–3)", [0, 1, 2, 3])
+    sex      = st.selectbox("Sex", ["Male", "Female"])
+    cp       = st.selectbox("Chest Pain Type", cp_options)
     trestbps = st.number_input("Resting Blood Pressure", 80, 200, 120)
     chol     = st.number_input("Cholesterol", 100, 600, 200)
-    fbs      = st.selectbox("Fasting Blood Sugar > 120 mg/dl", [0, 1])
-    restecg  = st.selectbox("Resting ECG", [0, 1, 2])
+    fbs      = st.selectbox("Fasting Blood Sugar > 120 mg/dl", [False, True])
+    restecg  = st.selectbox("Resting ECG", restecg_options)
     thalch   = st.number_input("Max Heart Rate Achieved", 60, 220, 150)
-    exang    = st.selectbox("Exercise Induced Angina", [0, 1])
-    dataset_label = st.selectbox("Dataset Source", dataset_options)
+    exang    = st.selectbox("Exercise Induced Angina", [False, True])
+    oldpeak  = st.number_input("ST Depression Induced", 0.0, 6.0, 0.0, step=0.1)
 
-    def cat_age(x):
-        if x < 30: return "under 30"
-        elif x < 40: return "30s"
-        elif x < 50: return "40s"
-        elif x < 60: return "50s"
-        elif x < 70: return "60s"
-        else: return "70+"
+    dataset_label   = st.selectbox("Dataset Source", dataset_options)
+    bp_category     = st.selectbox("Blood Pressure Category", bp_options)
+    chol_category   = st.selectbox("Cholesterol Risk", chol_options)
+    age_group_label = st.selectbox("Age Group", age_groups)
 
-    def bp_risk(x):
-        if x < 90: return "low"
-        elif x <= 140: return "normal"
-        else: return "high"
-
-    def chol_cat(x):
-        if x < 200: return "normal"
-        elif x <= 239: return "borderline"
-        else: return "high"
-
-    # Feature engineered fields
-    age_group      = cat_age(age_h)
-    blood_pressure = bp_risk(trestbps)
-    chol_risk      = chol_cat(chol)
-
-    # Build DataFrame (matching training data structure exactly)
+    # Input DataFrame (types & structure must match training)
     df3 = pd.DataFrame([{
         "age":            age_h,
         "sex":            sex,
@@ -152,40 +140,26 @@ else:
         "cp":             cp,
         "trestbps":       trestbps,
         "chol":           chol,
-        "fbs":            fbs,
+        "fbs":            int(fbs),
         "restecg":        restecg,
-        "thalch":         thalch, 
-        "exang":          exang,
-        "oldpeak":        0.0,
-        "age_group":      age_group,
-        "blood_pressure": blood_pressure,
-        "chol_risk":      chol_risk
+        "thalch":         thalch,
+        "exang":          int(exang),
+        "oldpeak":        oldpeak,
+        "age_group":      age_group_label,
+        "blood_pressure": bp_category,
+        "chol_risk":      chol_category
     }])
-
-    # --- Enforce types ---
-    num_cols = ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalch", "exang", "oldpeak"]
-    for col in num_cols:
-        df3[col] = pd.to_numeric(df3[col], errors='coerce')
-
-    cat_cols = ["dataset", "age_group", "blood_pressure", "chol_risk"]
-    for col in cat_cols:
-        df3[col] = df3[col].astype("category")
-
-    # --- Debug prints to check types and contents ---
-    st.write("DataFrame dtypes:")
-    st.write(df3.dtypes)
-    st.write("DataFrame sample:")
-    st.write(df3)
-    st.write("Unique value types per column:")
-    for col in df3.columns:
-        st.write(f"{col}: {df3[col].map(type).unique()}")
 
     if st.button("Predict Heart Disease"):
         try:
+            # Optional: Debugging display
+            # st.write("Input DataFrame:", df3)
+
             Xp3 = heart_pre.transform(df3)
             predict_and_show(heart_clf, Xp3)
         except Exception as e:
             st.error(f"Prediction failed. Please check inputs. Error: {e}")
+
 
 
 
