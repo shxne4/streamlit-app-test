@@ -163,7 +163,8 @@ else:
     }])
 
 
-
+    print(pipe.named_steps["preprocessor"].transformers)
+    
     if st.button("Predict Heart Disease"):
         try:
             Xp3 = heart_pre.transform(df3)
