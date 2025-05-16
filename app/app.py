@@ -144,28 +144,22 @@ else:
     blood_pressure = bp_risk(trestbps)
     chol_risk      = chol_cat(chol)
 
-    # Prepare matching input DataFrame
+    # Build DataFrame (matching training data structure exactly)
     df3 = pd.DataFrame([{
         "age":            age_h,
-        "sex":            sex,
+        "sex":            str(sex),
         "dataset":        dataset_label,
-        "cp":             cp,
-        "trestbps":       trestbps,
-        "chol":           chol,
-        "fbs":            fbs,
-        "restecg":        restecg,
-        "thalach":        thalach,
-        "exang":          exang,
+        "cp":             str(cp),
+        "trestbps":       float(trestbps),
+        "chol":           float(chol),
+        "fbs":            str(fbs),
+        "restecg":        str(restecg),
+        "thalach":        float(thalach),
+        "exang":          str(exang),
         "age_group":      age_group,
         "blood_pressure": blood_pressure,
         "chol_risk":      chol_risk
     }])
-
-    # Ensure categorical columns are strings
-    for col in ["sex", "cp", "fbs", "restecg", "exang", 
-                "age_group", "blood_pressure", "chol_risk", "dataset"]:
-        if col in df3.columns:
-            df3[col] = df3[col].astype(str)
 
     if st.button("Predict Heart Disease"):
         try:
@@ -173,3 +167,4 @@ else:
             predict_and_show(heart_clf, Xp3)
         except Exception as e:
             st.error(f"Prediction failed. Please check inputs. Error: {e}")
+
