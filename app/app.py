@@ -143,6 +143,7 @@ else:
     blood_pressure = bp_risk(trestbps)
     chol_risk      = chol_cat(chol)
 
+    # Build DataFrame (matching training data structure exactly)
     df3 = pd.DataFrame([{
         "age":            age_h,
         "sex":            sex,
@@ -152,7 +153,7 @@ else:
         "chol":           chol,
         "fbs":            fbs,
         "restecg":        restecg,
-        "thalch":         thalch, 
+        "thalch":         thalch,
         "exang":          exang,
         "oldpeak":        0.0,
         "age_group":      age_group,
@@ -160,16 +161,13 @@ else:
         "chol_risk":      chol_risk
     }])
 
-    # ===== ADD HERE: debug and fix dtypes =====
-    st.write("Input DataFrame dtypes:")
-    st.write(df3.dtypes)
-    st.write("Input DataFrame values:")
-    st.write(df3)
+    # === DEBUGGING: Check for NaNs and categorical values ===
+    st.write("Check for NaNs in input data:")
+    st.write(df3.isna().sum())
 
-    # Force numeric columns to numeric type (convert any bad types)
-    numeric_cols = ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalch", "exang", "oldpeak"]
-    for col in numeric_cols:
-        df3[col] = pd.to_numeric(df3[col], errors='coerce')
+    st.write("Unique values per categorical column:")
+    for col in df3.select_dtypes(include=['object', 'category']).columns:
+        st.write(f"{col}: {df3[col].unique()}")
 
     if st.button("Predict Heart Disease"):
         try:
@@ -177,5 +175,6 @@ else:
             predict_and_show(heart_clf, Xp3)
         except Exception as e:
             st.error(f"Prediction failed. Please check inputs. Error: {e}")
+
 
 
