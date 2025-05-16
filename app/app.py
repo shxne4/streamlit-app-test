@@ -144,6 +144,7 @@ else:
     chol_risk      = chol_cat(chol)
 
     # Build DataFrame (matching training data structure exactly)
+    # Build DataFrame (matching training data structure exactly)
     df3 = pd.DataFrame([{
         "age":            age_h,
         "sex":            sex,
@@ -160,6 +161,12 @@ else:
         "blood_pressure": blood_pressure,
         "chol_risk":      chol_risk
     }])
+    
+    # Explicitly convert categorical columns to 'category' dtype
+    cat_cols = ["dataset", "age_group", "blood_pressure", "chol_risk"]
+    for col in cat_cols:
+        df3[col] = df3[col].astype("category")
+
 
     # === DEBUGGING: Check for NaNs and categorical values ===
     st.write("Check for NaNs in input data:")
