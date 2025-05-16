@@ -5,7 +5,7 @@ import joblib
 # 1) Load the full pipeline (preprocessor + SMOTE + classifier) you saved
 @st.cache_resource
 def load_pipeline():
-    return joblib.load("diabetes_model.pkl")
+    return joblib.load("app/diabetes_model.pkl")
 
 pipeline = load_pipeline()
 
