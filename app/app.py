@@ -6,9 +6,9 @@ st.set_page_config(page_title="Disease Predictor", layout="centered")
 
 @st.cache_resource
 def load_pipelines():
-    diab_pipe   = joblib.load("diabetes_model.pkl")
-    stroke_pipe = joblib.load("stroke_model.pkl")
-    heart_pipe  = joblib.load("heart_model.pkl")
+    diab_pipe   = joblib.load("app/diabetes_model.pkl")
+    stroke_pipe = joblib.load("app/stroke_model.pkl")
+    heart_pipe  = joblib.load("app/heart_model.pkl")
     return diab_pipe, stroke_pipe, heart_pipe
 
 # Load the pipelines
