@@ -108,18 +108,22 @@ elif disease == "Stroke":
 else:
     st.header("Heart Disease Risk Predictor")
 
+    # Valid dataset values used in training (important!)
+    dataset_options = ["cleveland", "hungary", "switzerland", "va"]
+    
     # Inputs
-    age_h         = st.number_input("Age", 0, 120, 55)
-    sex           = st.selectbox("Sex (0 = Female, 1 = Male)", [0, 1])
-    cp            = st.selectbox("Chest Pain Type (0–3)", [0, 1, 2, 3])
-    trestbps      = st.number_input("Resting Blood Pressure", 80, 200, 120)
-    chol          = st.number_input("Cholesterol", 100, 600, 200)
-    fbs           = st.selectbox("Fasting Blood Sugar > 120 mg/dl (1 = True, 0 = False)", [0, 1])
-    restecg       = st.selectbox("Resting ECG (0–2)", [0, 1, 2])
-    thalach       = st.number_input("Max Heart Rate Achieved", 60, 220, 150)
-    exang         = st.selectbox("Exercise Induced Angina (1 = Yes, 0 = No)", [0, 1])
-    dataset_label = st.selectbox("Dataset Source", ["cleveland", "hungary", "switzerland", "va"])
+    age_h    = st.number_input("Age", 0, 120, 55)
+    sex      = st.selectbox("Sex (0 = Female, 1 = Male)", [0, 1])
+    cp       = st.selectbox("Chest Pain Type (0–3)", [0, 1, 2, 3])
+    trestbps = st.number_input("Resting Blood Pressure", 80, 200, 120)
+    chol     = st.number_input("Cholesterol", 100, 600, 200)
+    fbs      = st.selectbox("Fasting Blood Sugar > 120 mg/dl", [0, 1])
+    restecg  = st.selectbox("Resting ECG", [0, 1, 2])
+    thalach  = st.number_input("Max Heart Rate Achieved", 60, 220, 150)
+    exang    = st.selectbox("Exercise Induced Angina", [0, 1])
+    dataset_label = st.selectbox("Dataset Source", dataset_options)
 
+    # Functions for feature engineering
     def cat_age(x):
         if x < 30: return "under 30"
         elif x < 40: return "30s"
@@ -138,11 +142,12 @@ else:
         elif x <= 239: return "borderline"
         else: return "high"
 
+    # Feature engineered fields
     age_group      = cat_age(age_h)
     blood_pressure = bp_risk(trestbps)
     chol_risk      = chol_cat(chol)
 
-    # Prepare input DataFrame (MATCHING TRAINING COLUMNS)
+    # Prepare matching input DataFrame
     df3 = pd.DataFrame([{
         "id":             0,
         "age":            age_h,
@@ -153,7 +158,7 @@ else:
         "chol":           chol,
         "fbs":            fbs,
         "restecg":        restecg,
-        "thalch":         thalach,  # renamed to match training typo
+        "thalch":         thalach,
         "exang":          exang,
         "oldpeak":        0.0,
         "num":            0,
@@ -163,5 +168,8 @@ else:
     }])
 
     if st.button("Predict Heart Disease"):
-        Xp3 = heart_pre.transform(df3)
-        predict_and_show(heart_clf, Xp3)
+        try:
+            Xp3 = heart_pre.transform(df3)
+            predict_and_show(heart_clf, Xp3)
+        except Exception as e:
+            st.error(f"Prediction failed. Please check inputs. Error: {e}")
