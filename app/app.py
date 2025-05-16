@@ -107,54 +107,59 @@ elif disease == "Stroke":
 # ── HEART DISEASE ────────────────────────────────────────────────────
 else:
     st.header("Heart Disease Risk Predictor")
-    age_h           = st.number_input("Age", 0, 120, 50)
-    sex_h           = st.selectbox("Sex", ["Male", "Female"])
-    cp              = st.selectbox("Chest Pain Type (0-3)", [0, 1, 2, 3])
-    trestbps        = st.number_input("Resting BP (mm Hg)", 80, 200, 120)
-    chol            = st.number_input("Cholesterol (mg/dl)", 100, 600, 200)
-    fbs             = st.selectbox("Fasting Blood Sugar > 120 mg/dl (1 = Yes, 0 = No)", [0, 1])
-    restecg         = st.selectbox("Resting ECG (0=normal, 1=ST-T abnormality, 2=LV hypertrophy)", [0, 1, 2])
-    thalach         = st.number_input("Max Heart Rate Achieved", 60, 210, 150)
-    exang           = st.selectbox("Exercise Induced Angina (1 = Yes, 0 = No)", [0, 1])
-    dataset_label   = "custom"  # if required by your model
+    age_h       = st.number_input("Age", 0, 120, 55)
+    sex         = st.selectbox("Sex", ["Male", "Female"])
+    cp          = st.selectbox("Chest Pain Type (cp)", [0, 1, 2, 3])
+    trestbps    = st.number_input("Resting Blood Pressure (trestbps)", 80, 200, 120)
+    chol        = st.number_input("Cholesterol (chol)", 100, 400, 200)
+    fbs         = st.selectbox("Fasting Blood Sugar > 120 mg/dl (fbs)", [0, 1])
+    restecg     = st.selectbox("Resting ECG (restecg)", [0, 1, 2])
+    thalach     = st.number_input("Max Heart Rate Achieved (thalach)", 60, 220, 150)
+    exang       = st.selectbox("Exercise Induced Angina (exang)", [0, 1])
+    dataset_label = st.selectbox("Dataset Source", ["Cleveland", "Hungarian", "Switzerland", "VA"])
 
     # Derived features
-    def cat_age_h(x):
-        if x < 20: return "0-19"
-        elif x < 40: return "20-39"
-        elif x < 60: return "40-59"
-        else: return "60+"
+    def cat_age(x):
+        if x < 40: return "under_40"
+        elif x < 55: return "40s-50s"
+        elif x < 70: return "60s"
+        return "70+"
+    
+    def cat_bp(x):
+        return "high" if x >= 130 else "normal"
 
     def cat_chol(x):
-        if x < 200: return "Normal"
-        elif x < 240: return "Borderline"
-        else: return "High"
+        return "high" if x >= 240 else "normal"
 
-    def cat_bp(x):
-        if x < 120: return "Normal"
-        elif x < 130: return "Elevated"
-        else: return "High"
-
-    age_group_h     = cat_age_h(age_h)
-    chol_risk       = cat_chol(chol)
+    age_group       = cat_age(age_h)
     blood_pressure  = cat_bp(trestbps)
-    sex_numeric     = 1 if sex_h == "Male" else 0
+    chol_risk       = cat_chol(chol)
+    sex_numeric     = 1 if sex == "Male" else 0  # assuming model used 1/0 for sex
 
     df3 = pd.DataFrame([{
-        "age":          age_h,
-        "sex":          sex_numeric,
-        "cp":           cp,
-        "trestbps":     trestbps,
-        "chol":         chol,
-        "fbs":          fbs,
-        "restecg":      restecg,
-        "thalach":      thalach,
-        "exang":        exang,
-        "age_group":    age_group_h,
-        "chol_risk":    chol_risk,
+        "age":           age_h,
+        "sex":           sex_numeric,
+        "cp":            cp,
+        "trestbps":      trestbps,
+        "chol":          chol,
+        "fbs":           fbs,
+        "restecg":       restecg,
+        "thalach":       thalach,
+        "exang":         exang,
+        "age_group":     age_group,
         "blood_pressure": blood_pressure,
-        "dataset":      dataset_label
+        "chol_risk":     chol_risk,
+        "dataset":       dataset_label
     }])
+
+    # 🔍 DEBUG: Show expected vs actual input columns
+    st.write("Expected columns by preprocessor:", heart_pre.feature_names_in_)
+    st.write("Your input DataFrame columns:", df3.columns.tolist())
+
+    if st.button("Predict Heart Disease"):
+        Xp3 = heart_pre.transform(df3)  # This is where the error happens
+        predict_and_show(heart_clf, Xp3)
+
 
     if st.button("Predict Heart Disease"):
         Xp3 = heart_pre.transform(df3)
