@@ -156,6 +156,8 @@ else:
             # st.write("Input DataFrame:", df3)
 
             Xp3 = heart_pre.transform(df3)
+            print(pd.DataFrame(Xp3, columns=heart_pre.get_feature_names_out()))
+
             predict_and_show(heart_clf, Xp3)
         except Exception as e:
             st.error(f"Prediction failed. Please check inputs. Error: {e}")
