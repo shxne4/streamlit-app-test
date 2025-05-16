@@ -147,20 +147,21 @@ else:
     # Build DataFrame (matching training data structure exactly)
     df3 = pd.DataFrame([{
         "age":            age_h,
-        "sex":            str(sex),
+        "sex":            sex,
         "dataset":        dataset_label,
-        "cp":             str(cp),
-        "trestbps":       float(trestbps),
-        "chol":           float(chol),
-        "fbs":            str(fbs),
-        "restecg":        str(restecg),
-        "thalch":         float(thalach),    # renamed to match training typo
-        "exang":          str(exang),
-        "oldpeak":        0.0,               # add it with default
+        "cp":             cp,
+        "trestbps":       trestbps,
+        "chol":           chol,
+        "fbs":            fbs,
+        "restecg":        restecg,
+        "thalch":         thalach,       # match typo from training
+        "exang":          exang,
+        "oldpeak":        0.0,
         "age_group":      age_group,
         "blood_pressure": blood_pressure,
         "chol_risk":      chol_risk
     }])
+
 
 
     if st.button("Predict Heart Disease"):
